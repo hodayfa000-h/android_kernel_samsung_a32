@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-# Set up toolchain paths
-export CROSS_COMPILE=$(pwd)/gcc/bin/aarch64-linux-android-
-export CC=$(pwd)/clang/bin/clang
+# Toolchain paths
+export CROSS_COMPILE=$(pwd)/tools/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+export CC=$(pwd)/tools/clang/host/linux-x86/clang-r407598/bin/clang
 export CLANG_TRIPLE=aarch64-linux-gnu-
 export ARCH=arm64
 export ANDROID_MAJOR_VERSION=r
