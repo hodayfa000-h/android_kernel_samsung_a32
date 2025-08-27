@@ -2,7 +2,7 @@
 set -e
 
 # Define kernel root to avoid path confusion
-export KERNEL_ROOT=$(realpath "$(dirname "$0")")
+export KERNEL_ROOT=$(realpath "$(dirname "$0")/..")
 
 # Toolchain paths
 export CROSS_COMPILE=$KERNEL_ROOT/tools/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
