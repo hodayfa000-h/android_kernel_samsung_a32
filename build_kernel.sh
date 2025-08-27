@@ -17,20 +17,8 @@ echo "KERNEL_ROOT: $KERNEL_ROOT"
 ls -l "$KERNEL_ROOT"
 
 echo ""
-echo "========== tools/build in OUTER REPO =========="
-if [ -d "$OUTER_REPO_ROOT/tools/build" ]; then
-    ls -l "$OUTER_REPO_ROOT/tools/build"
-else
-    echo "tools/build not found in OUTER_REPO_ROOT"
-fi
-
-echo ""
 echo "========== tools/build in NESTED KERNEL ROOT =========="
-if [ -d "$KERNEL_ROOT/tools/build" ]; then
-    ls -l "$KERNEL_ROOT/tools/build"
-else
-    echo "tools/build not found in KERNEL_ROOT"
-fi
+ls -l "$KERNEL_ROOT/tools/build" || echo "tools/build not found."
 
 echo ""
 echo "========== Direct check: ls -l on nested tools/build =========="
@@ -39,10 +27,8 @@ ls -l /home/runner/work/android_kernel_samsung_a32/android_kernel_samsung_a32/to
 # Choose correct path for cpio binary
 if [ -f "$KERNEL_ROOT/tools/build/cpio" ]; then
     export CPIO_PATH="$KERNEL_ROOT/tools/build/cpio"
-elif [ -f "$OUTER_REPO_ROOT/tools/build/cpio" ]; then
-    export CPIO_PATH="$OUTER_REPO_ROOT/tools/build/cpio"
 else
-    echo "Error: cpio binary not found in either location."
+    echo "Error: cpio binary not found in tools/build"
     exit 1
 fi
 
@@ -50,9 +36,9 @@ fi
 chmod +x "$CPIO_PATH"
 export PATH="$(dirname "$CPIO_PATH"):$PATH"
 
-# Toolchain paths
-export CROSS_COMPILE=$KERNEL_ROOT/tools/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
-export CC=$KERNEL_ROOT/tools/clang/host/linux-x86/clang-r407598/bin/clang
+# Toolchain paths (from FalconJaw clone)
+export CROSS_COMPILE=$KERNEL_ROOT/external_toolchains/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+export CC=$KERNEL_ROOT/external_toolchains/clang/host/linux-x86/clang-r407598/bin/clang
 export CLANG_TRIPLE=aarch64-linux-gnu-
 export ARCH=arm64
 export ANDROID_MAJOR_VERSION=r
