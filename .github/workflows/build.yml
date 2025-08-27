@@ -25,7 +25,7 @@ jobs:
       run: ./build_kernel.sh
 
     - name: Upload compiled Image
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Kernel Image
         path: arch/arm64/boot/Image
