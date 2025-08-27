@@ -89,6 +89,7 @@ endif
 
 hostc_flags    = -Wp,-MD,$(depfile) $(__hostc_flags)
 hostcxx_flags  = -Wp,-MD,$(depfile) $(__hostcxx_flags)
+HOSTCFLAGS_sortextable.o += -I$(srctree)/tools/include
 
 #####
 # Compile programs on the host
