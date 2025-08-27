@@ -8,6 +8,10 @@ export CLANG_TRIPLE=aarch64-linux-gnu-
 export ARCH=arm64
 export ANDROID_MAJOR_VERSION=r
 
+# Inject header path for sortextable
+export HOSTCFLAGS="-I$(pwd)/tools/include"
+export HOSTCXXFLAGS="-I$(pwd)/tools/include"
+
 # Optional flags
 export KCFLAGS=-w
 export CONFIG_SECTION_MISMATCH_WARN_ONLY=y
