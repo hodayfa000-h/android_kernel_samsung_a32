@@ -32,6 +32,10 @@ else
     echo "tools/build not found in KERNEL_ROOT"
 fi
 
+echo ""
+echo "========== Direct check: ls -l on nested tools/build =========="
+ls -l /home/runner/work/android_kernel_samsung_a32/android_kernel_samsung_a32/tools/build || echo "Direct path tools/build not found."
+
 # Choose correct path for cpio binary
 if [ -f "$KERNEL_ROOT/tools/build/cpio" ]; then
     export CPIO_PATH="$KERNEL_ROOT/tools/build/cpio"
