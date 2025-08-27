@@ -1,27 +1,31 @@
 #!/bin/bash
 set -e
 
+# Define kernel root to avoid path confusion
+export KERNEL_ROOT=$(realpath "$(dirname "$0")/..")
+
 # Toolchain paths
-export CROSS_COMPILE=$(pwd)/tools/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
-export CC=$(pwd)/tools/clang/host/linux-x86/clang-r407598/bin/clang
+export CROSS_COMPILE=$KERNEL_ROOT/tools/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-
+export CC=$KERNEL_ROOT/tools/clang/host/linux-x86/clang-r407598/bin/clang
 export CLANG_TRIPLE=aarch64-linux-gnu-
 export ARCH=arm64
 export ANDROID_MAJOR_VERSION=r
 
 # Inject header path for sortextable
-export HOSTCFLAGS="-I$(pwd)/tools/include"
-export HOSTCXXFLAGS="-I$(pwd)/tools/include"
+export HOSTCFLAGS="-I$KERNEL_ROOT/tools/include"
+export HOSTCXXFLAGS="-I$KERNEL_ROOT/tools/include"
 
 # Optional flags
 export KCFLAGS=-w
 export CONFIG_SECTION_MISMATCH_WARN_ONLY=y
 
-# 🔨 Build missing cpio tool for gen_kheaders.sh
-make -C tools/build cpio
+# Ensure cpio binary is executable and visible
+chmod +x $KERNEL_ROOT/tools/build/cpio
+export PATH=$KERNEL_ROOT/tools/build:$PATH
 
 # Build kernel
-make -C $(pwd) O=$(pwd)/out KCFLAGS=-w CONFIG_SECTION_MISMATCH_WARN_ONLY=y -j$(nproc --all) a32_defconfig
-make -C $(pwd) O=$(pwd)/out KCFLAGS=-w CONFIG_SECTION_MISMATCH_WARN_ONLY=y -j$(nproc --all)
+make -C $KERNEL_ROOT O=$KERNEL_ROOT/out KCFLAGS=-w CONFIG_SECTION_MISMATCH_WARN_ONLY=y -j$(nproc --all) a32_defconfig
+make -C $KERNEL_ROOT O=$KERNEL_ROOT/out KCFLAGS=-w CONFIG_SECTION_MISMATCH_WARN_ONLY=y -j$(nproc --all)
 
 # Copy final Image
-cp out/arch/arm64/boot/Image $(pwd)/arch/arm64/boot/Image
+cp $KERNEL_ROOT/out/arch/arm64/boot/Image $KERNEL_ROOT/arch/arm64/boot/Image
