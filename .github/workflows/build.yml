@@ -12,11 +12,13 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v3
+      with:
+        submodules: true
+        fetch-depth: 0
 
-    - name: Set up toolchains
+    - name: Clone toolchains
       run: |
-        git clone --depth=1 https://github.com/akhilnarang/clang-r383902 clang-r383902
-        git clone --depth=1 https://github.com/arter97/aarch64-linux-android-4.9 aarch64-linux-android-4.9
+        git clone https://github.com/FalconJaw/android-kernel-tools.git tools
 
     - name: Make build script executable
       run: chmod +x build_kernel.sh
