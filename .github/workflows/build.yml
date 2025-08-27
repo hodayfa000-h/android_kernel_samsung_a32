@@ -16,12 +16,8 @@ jobs:
         submodules: true
         fetch-depth: 0
 
-    - name: Clean toolchain directory
-      run: rm -rf tools
-
-    - name: Clone toolchains
-      run: |
-        git clone https://github.com/FalconJaw/android-kernel-tools.git tools
+    - name: Clone toolchains into external_toolchains
+      run: git clone https://github.com/FalconJaw/android-kernel-tools.git external_toolchains
 
     - name: Make build script executable
       run: chmod +x build_kernel.sh
