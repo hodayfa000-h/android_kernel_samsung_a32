@@ -1,0 +1,31 @@
+name: Build Kernel
+
+on:
+  push:
+    branches: [ tweaks ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Set up toolchains
+      run: |
+        git clone --depth=1 https://github.com/akhilnarang/clang-r383902 clang-r383902
+        git clone --depth=1 https://github.com/arter97/aarch64-linux-android-4.9 aarch64-linux-android-4.9
+
+    - name: Make build script executable
+      run: chmod +x build_kernel.sh
+
+    - name: Run build script
+      run: ./build_kernel.sh
+
+    - name: Upload compiled Image
+      uses: actions/upload-artifact@v3
+      with:
+        name: Kernel Image
+        path: arch/arm64/boot/Image
