@@ -16,6 +16,9 @@ export HOSTCXXFLAGS="-I$(pwd)/tools/include"
 export KCFLAGS=-w
 export CONFIG_SECTION_MISMATCH_WARN_ONLY=y
 
+# 🔨 Build missing cpio tool for gen_kheaders.sh
+make -C tools/build cpio
+
 # Build kernel
 make -C $(pwd) O=$(pwd)/out KCFLAGS=-w CONFIG_SECTION_MISMATCH_WARN_ONLY=y -j$(nproc --all) a32_defconfig
 make -C $(pwd) O=$(pwd)/out KCFLAGS=-w CONFIG_SECTION_MISMATCH_WARN_ONLY=y -j$(nproc --all)
