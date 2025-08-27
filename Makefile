@@ -380,7 +380,7 @@ HOST_LOADLIBES := $(HOST_LFS_LIBS)
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
 LDGOLD		= $(CROSS_COMPILE)ld.gold
-CC		= $(srctree)/../clang-r383902/bin/clang
+CC ?= $(CC)
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -490,7 +490,7 @@ endif
 
 ifeq ($(cc-name),clang)
 ifneq ($(CROSS_COMPILE),)
-CLANG_TRIPLE	?= $(srctree)/../clang-r383902/bin/aarch64-linux-gnu-
+CLANG_TRIPLE ?= $(CLANG_TRIPLE)
 CLANG_FLAGS	+= --target=$(notdir $(CLANG_TRIPLE:%-=%))
 ifeq ($(shell $(srctree)/scripts/clang-android.sh $(CC) $(CLANG_FLAGS)), y)
 $(error "Clang with Android --target detected. Did you specify CLANG_TRIPLE?")
