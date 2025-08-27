@@ -28,8 +28,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <tools/be_byteshift.h>
-#include <tools/le_byteshift.h>
+#include "tools/be_byteshift.h"
+#include "tools/le_byteshift.h"
 #ifndef EM_ARCOMPACT
 #define EM_ARCOMPACT	93
 #endif
