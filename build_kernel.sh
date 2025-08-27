@@ -19,6 +19,14 @@ export HOSTCXXFLAGS="-I$KERNEL_ROOT/tools/include"
 export KCFLAGS=-w
 export CONFIG_SECTION_MISMATCH_WARN_ONLY=y
 
+# Diagnostic logging: list contents of tools/build
+echo "Listing contents of tools/build:"
+ls -l "$KERNEL_ROOT/tools/build" || echo "tools/build directory not found."
+
+# Diagnostic logging: search for any file named *cpio*
+echo "Searching for any file named '*cpio' in tools/build:"
+find "$KERNEL_ROOT/tools/build" -type f -name '*cpio*' || echo "No matching files found."
+
 # Sanity check for cpio binary
 if [ ! -f "$KERNEL_ROOT/tools/build/cpio" ]; then
     echo "Error: cpio binary not found at $KERNEL_ROOT/tools/build/cpio"
