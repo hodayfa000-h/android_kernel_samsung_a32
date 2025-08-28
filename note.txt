@@ -1,0 +1,3 @@
+Yeah I mean I tried... 11h of debugging and building... it just doesn't work
+this repo is well impossible to build now, I tried adding susFS but the patch script fails 
+and manual patching doesn't help nor does changing fuzz or ignoring whitespaces, So yeah unless I heavily modify it this won't work... so yeah , I will just accept no susFS
