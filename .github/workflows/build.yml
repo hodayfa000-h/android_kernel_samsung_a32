@@ -18,16 +18,19 @@ jobs:
 
     - name: Apply susFS patches with maximum fuzz tolerance
       run: |
-        echo "🔨 Applying patch 50 with fuzz, whitespace forgiveness, and silent mode..."
-        patch -p1 --fuzz=5 --ignore-whitespace --silent < kernel_patches/50_add_susfs_in_kernel-4.14.patch
+        echo "🔨 Applying patch 50..."
+        patch -p1 --fuzz=5 --ignore-whitespace < kernel_patches/50_add_susfs_in_kernel-4.14.patch || echo "⚠️ Patch 50 had rejects"
 
-        echo "🔨 Applying patch 10 with fuzz, whitespace forgiveness, and silent mode..."
-        patch -p1 --fuzz=5 --ignore-whitespace --silent < kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch
+        echo "🔨 Applying patch 10..."
+        patch -p1 --fuzz=5 --ignore-whitespace < kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch || echo "⚠️ Patch 10 had rejects"
 
     - name: Archive patch rejects
       run: |
         mkdir -p patch_rejects
-        find . -name '*.rej' -exec cp {} patch_rejects/ \;
+        echo "📦 Searching for .rej files..."
+        find . -type f -name '*.rej' -exec cp --parents {} patch_rejects/ \;
+        echo "📦 Contents of patch_rejects:"
+        find patch_rejects -type f || echo "⚠️ No rejects found"
 
     - name: Upload patch rejects
       uses: actions/upload-artifact@v4
@@ -36,6 +39,7 @@ jobs:
         name: Patch Rejects
         path: patch_rejects/
 
+    # Optional: Comment this out if you're manually patching and don't want to fail the job
     - name: Fail if any hunks rejected
       run: |
         REJS=$(find . -type f -name '*.rej')
