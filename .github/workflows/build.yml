@@ -16,18 +16,62 @@ jobs:
         submodules: true
         fetch-depth: 0
 
-    - name: Apply susFS patches
+    - name: Apply susFS patches with maximum fuzz tolerance
       run: |
-        patch -p1 < kernel_patches/50_add_susfs_in_kernel-4.14.patch
-        patch -p1 < kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch
+        echo "🔨 Applying patch 50 with fuzz, whitespace forgiveness, and silent mode..."
+        patch -p1 --fuzz=5 --ignore-whitespace --silent < kernel_patches/50_add_susfs_in_kernel-4.14.patch
 
-    - name: Clone toolchains into external_toolchains
+        echo "🔨 Applying patch 10 with fuzz, whitespace forgiveness, and silent mode..."
+        patch -p1 --fuzz=5 --ignore-whitespace --silent < kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch
+
+    - name: Archive patch rejects
+      run: |
+        mkdir -p patch_rejects
+        find . -name '*.rej' -exec cp {} patch_rejects/ \;
+
+    - name: Upload patch rejects
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: Patch Rejects
+        path: patch_rejects/
+
+    - name: Fail if any hunks rejected
+      run: |
+        REJS=$(find . -type f -name '*.rej')
+        if [ -n "$REJS" ]; then
+          echo "🚨 Patch rejects detected:"
+          find patch_rejects -type f -exec cat {} \;
+          exit 1
+        else
+          echo "✅ All hunks applied cleanly"
+        fi
+
+    - name: Verify susFS integration
+      run: |
+        echo "🔍 Checking fs/susfs directory"
+        ls -d fs/susfs || (echo "❌ fs/susfs missing" && exit 1)
+
+        echo "🔍 Checking fs/Kconfig wiring"
+        grep -R 'fs/susfs/Kconfig' fs/Kconfig || (echo "❌ missing Kconfig entry" && exit 1)
+
+        echo "🔍 Checking fs/Makefile wiring"
+        grep -R "obj-\\$(CONFIG_KSU_SUSFS)" fs/Makefile || (echo "❌ missing Makefile entry" && exit 1)
+
+        echo "🔍 Checking defconfig flags"
+        grep -E 'CONFIG_KSU_SUSFS_SUS_PATH=y' arch/arm64/configs/a32_defconfig || exit 1
+        grep -E 'CONFIG_KSU_SUSFS_OPEN_REDIRECT=y' arch/arm64/configs/a32_defconfig || exit 1
+        grep -E 'CONFIG_KSU_SUSFS_SUS_KSTAT=y' arch/arm64/configs/a32_defconfig || exit 1
+
+        echo "✅ susFS wiring verified"
+
+    - name: Clone toolchains
       run: git clone https://github.com/FalconJaw/android-kernel-tools.git external_toolchains
 
     - name: Make build script executable
       run: chmod +x build_kernel.sh
 
-    - name: Run build script
+    - name: Build kernel
       run: ./build_kernel.sh
 
     - name: Upload compiled Image
