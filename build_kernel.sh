@@ -4,8 +4,8 @@ set -e
 export KERNEL_ROOT=$(realpath "$(dirname "$0")")
 export OUT_DIR="$KERNEL_ROOT/out"
 
-echo "🔧 Kernel root: $KERNEL_ROOT"
-echo "📦 Output dir: $OUT_DIR"
+echo "Kernel root: $KERNEL_ROOT"
+echo "Output dir: $OUT_DIR"
 
 # Toolchain setup
 export CROSS_COMPILE=$KERNEL_ROOT/external_toolchains/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-

@@ -16,46 +16,23 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Apply susFS patches with maximum fuzz tolerance
-        run: |
-          echo "🔨 Applying patch 50..."
-          patch -p1 --fuzz=5 --ignore-whitespace < kernel_patches/50_add_susfs_in_kernel-4.14.patch || true
-
-          echo "🔨 Applying patch 10..."
-          patch -p1 --fuzz=5 --ignore-whitespace < kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch || true
-
-      - name: Archive patch rejects
-        run: |
-          mkdir -p patch_rejects
-          echo "📦 Searching for .rej files..."
-          find . -type f -name '*.rej' -exec cp --parents {} patch_rejects/ \;
-          echo "📦 Contents of patch_rejects:"
-          find patch_rejects -type f || echo "⚠️ No rejects found"
-
-      - name: Upload patch rejects
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Patch Rejects
-          path: patch_rejects/
-
       - name: Verify susFS integration
         run: |
-          echo "🔍 Checking fs/susfs directory"
-          ls -d fs/susfs || (echo "❌ fs/susfs missing" && exit 1)
+          echo "Checking fs/susfs directory"
+          ls -d fs/susfs || (echo "fs/susfs missing" && exit 1)
 
-          echo "🔍 Checking fs/Kconfig wiring"
-          grep -R 'fs/susfs/Kconfig' fs/Kconfig || (echo "❌ missing Kconfig entry" && exit 1)
+          echo "Checking fs/Kconfig wiring"
+          grep -R 'fs/susfs/Kconfig' fs/Kconfig || (echo "missing Kconfig entry" && exit 1)
 
-          echo "🔍 Checking fs/Makefile wiring"
-          grep -R "obj-\\$(CONFIG_KSU_SUSFS)" fs/Makefile || (echo "❌ missing Makefile entry" && exit 1)
+          echo "Checking fs/Makefile wiring"
+          grep -R "obj-\\$(CONFIG_KSU_SUSFS)" fs/Makefile || (echo "missing Makefile entry" && exit 1)
 
-          echo "🔍 Checking defconfig flags"
+          echo "Checking defconfig flags"
           grep -E 'CONFIG_KSU_SUSFS_SUS_PATH=y' arch/arm64/configs/a32_defconfig || exit 1
           grep -E 'CONFIG_KSU_SUSFS_OPEN_REDIRECT=y' arch/arm64/configs/a32_defconfig || exit 1
           grep -E 'CONFIG_KSU_SUSFS_SUS_KSTAT=y' arch/arm64/configs/a32_defconfig || exit 1
 
-          echo "✅ susFS wiring verified"
+          echo "susFS wiring verified"
 
       - name: Clone toolchains
         run: git clone https://github.com/FalconJaw/android-kernel-tools.git external_toolchains
