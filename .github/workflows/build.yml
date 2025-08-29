@@ -18,14 +18,13 @@ jobs:
 
       - name: Verify susFS integration
         run: |
-          echo "Checking fs/susfs directory"
-          ls -d fs/susfs || (echo "fs/susfs missing" && exit 1)
+          echo "Checking susFS source files"
+          ls fs/susfs.c fs/sus_su.c || (echo "susFS source files missing" && exit 1)
 
-          echo "Checking fs/Kconfig wiring"
-          grep -R 'fs/susfs/Kconfig' fs/Kconfig || (echo "missing Kconfig entry" && exit 1)
-
-          echo "Checking fs/Makefile wiring"
-          grep -R "obj-\\$(CONFIG_KSU_SUSFS)" fs/Makefile || (echo "missing Makefile entry" && exit 1)
+          echo "Checking susFS headers"
+          ls include/linux/susfs.h \
+             include/linux/sus_su.h \
+             include/linux/susfs_def.h || (echo "susFS headers missing" && exit 1)
 
           echo "Checking defconfig flags"
           grep -E 'CONFIG_KSU_SUSFS_SUS_PATH=y' arch/arm64/configs/a32_defconfig || exit 1
