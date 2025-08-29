@@ -908,6 +908,27 @@ void susfs_init(void) {
 	spin_lock_init(&susfs_uname_spin_lock);
 	susfs_my_uname_init();
 #endif
+
+#ifdef CONFIG_KSU_SUSFS_SUS_SU
+	int maj;
+	char drv_path[MAX_DRV_NAME + 1];
+
+	if (sus_su_fifo_init(&maj, drv_path) == 0) {
+		struct file *filep;
+		loff_t pos = 0;
+		mm_segment_t oldfs = get_fs();
+		set_fs(KERNEL_DS);
+
+		filep = filp_open("/system/bin/sus_su_drv_path", O_WRONLY | O_CREAT | O_TRUNC, 0600);
+		if (!IS_ERR(filep)) {
+			vfs_write(filep, drv_path, strlen(drv_path), &pos);
+			filp_close(filep, NULL);
+		}
+
+		set_fs(oldfs);
+	}
+#endif
+
 	SUSFS_LOGI("susfs is initialized! version: " SUSFS_VERSION " \n");
 }
 
