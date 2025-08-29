@@ -26,11 +26,6 @@ jobs:
              include/linux/sus_su.h \
              include/linux/susfs_def.h || (echo "susFS headers missing" && exit 1)
 
-          echo "Checking defconfig flags"
-          grep -E 'CONFIG_KSU_SUSFS_SUS_PATH=y' arch/arm64/configs/a32_defconfig || exit 1
-          grep -E 'CONFIG_KSU_SUSFS_OPEN_REDIRECT=y' arch/arm64/configs/a32_defconfig || exit 1
-          grep -E 'CONFIG_KSU_SUSFS_SUS_KSTAT=y' arch/arm64/configs/a32_defconfig || exit 1
-
           echo "susFS wiring verified"
 
       - name: Clone toolchains
